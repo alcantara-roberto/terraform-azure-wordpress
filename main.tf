@@ -46,9 +46,8 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s"
+  vm_size               = "Standard_DS1_v2"  # Novo tamanho da VM
 
-  # Configuração do disco do SO
   storage_os_disk {
     name              = "osdisk"
     caching           = "ReadWrite"
@@ -56,7 +55,6 @@ resource "azurerm_virtual_machine" "vm" {
     managed_disk_type = "Standard_LRS"
   }
 
-  # Referência à imagem do SO
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
@@ -64,14 +62,12 @@ resource "azurerm_virtual_machine" "vm" {
     version   = "latest"
   }
 
-  # Configuração do perfil do SO
   os_profile {
     computer_name  = "hostname"
-    admin_username = "adminuser"
-    admin_password = "Password1234!"
+    admin_username = var.admin_username
+    admin_password = var.admin_password
   }
 
-  # Configuração do Linux
   os_profile_linux_config {
     disable_password_authentication = false
   }
@@ -80,7 +76,6 @@ resource "azurerm_virtual_machine" "vm" {
     environment = "TerraformDemo"
   }
 
-  # Provisão de scripts para instalação do Docker e configuração dos containers
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
@@ -113,3 +108,4 @@ resource "azurerm_virtual_machine" "vm" {
     }
   }
 }
+
