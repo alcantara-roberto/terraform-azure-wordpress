@@ -46,7 +46,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = "Standard_B1s"
 
   storage_os_disk {
     name              = "osdisk"
@@ -74,6 +74,10 @@ resource "azurerm_virtual_machine" "vm" {
 
   tags = {
     environment = "TerraformDemo"
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 60"
   }
 
   # Provisioner para transferir o arquivo docker-compose.yml
@@ -111,11 +115,16 @@ resource "azurerm_virtual_machine" "vm" {
       port     = 22
     }
   }
+
+  depends_on = [
+    azurerm_public_ip.public_ip
+  ]
 }
 
 output "public_ip_address" {
   value = azurerm_public_ip.public_ip.ip_address
 }
+
 
 
 
