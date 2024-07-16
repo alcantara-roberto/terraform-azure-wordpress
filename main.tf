@@ -40,8 +40,6 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
-
-  depends_on = [azurerm_public_ip.public_ip]
 }
 
 resource "azurerm_virtual_machine" "vm" {
@@ -94,8 +92,6 @@ resource "azurerm_virtual_machine" "vm" {
       host     = azurerm_public_ip.public_ip.ip_address
       port     = 22
     }
-
-    depends_on = [azurerm_public_ip.public_ip]
   }
 
   provisioner "remote-exec" {
@@ -117,18 +113,18 @@ resource "azurerm_virtual_machine" "vm" {
       host     = azurerm_public_ip.public_ip.ip_address
       port     = 22
     }
-
-    depends_on = [azurerm_public_ip.public_ip]
   }
 
   depends_on = [
-    azurerm_network_interface.nic
+    azurerm_network_interface.nic,
+    azurerm_public_ip.public_ip
   ]
 }
 
 output "public_ip_address" {
   value = azurerm_public_ip.public_ip.ip_address
 }
+
 
 
 
