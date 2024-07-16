@@ -19,8 +19,6 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
-
-  depends_on = [azurerm_virtual_network.vnet]
 }
 
 resource "azurerm_public_ip" "public_ip" {
@@ -28,7 +26,6 @@ resource "azurerm_public_ip" "public_ip" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
-  sku                 = "Basic"
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -42,8 +39,6 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
-
-  depends_on = [azurerm_subnet.subnet]
 }
 
 resource "azurerm_virtual_machine" "vm" {
@@ -51,7 +46,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s"
+  vm_size               = "Standard_B1s"  # Mudança para um tamanho de VM disponível
 
   storage_os_disk {
     name              = "osdisk"
@@ -113,19 +108,13 @@ resource "azurerm_virtual_machine" "vm" {
       host     = azurerm_public_ip.public_ip.ip_address
       port     = 22
     }
-
-    depends_on = [azurerm_network_interface.nic]
   }
-
-  depends_on = [
-    azurerm_network_interface.nic,
-    azurerm_public_ip.public_ip
-  ]
 }
 
 output "public_ip_address" {
   value = azurerm_public_ip.public_ip.ip_address
 }
+
 
 
 
