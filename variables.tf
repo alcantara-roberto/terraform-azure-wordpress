@@ -5,7 +5,7 @@ variable "resource_group_name" {
 
 variable "location" {
   description = "The Azure region to deploy the resources"
-  default     = "East US"
+  default     = "West US"  # Mudando a localização para West US
 }
 
 variable "admin_username" {
@@ -17,3 +17,4 @@ variable "admin_password" {
   description = "The admin password for the VM"
   default     = "Password1234!"
 }
+
