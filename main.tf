@@ -51,7 +51,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s"  # Alterado para um SKU que deve estar disponível
+  vm_size               = "Standard_B1s"
 
   storage_os_disk {
     name              = "osdisk"
@@ -79,10 +79,6 @@ resource "azurerm_virtual_machine" "vm" {
 
   tags = {
     environment = "TerraformDemo"
-  }
-
-  provisioner "local-exec" {
-    command = "sleep 60"
   }
 
   provisioner "file" {
@@ -117,6 +113,8 @@ resource "azurerm_virtual_machine" "vm" {
       host     = azurerm_public_ip.public_ip.ip_address
       port     = 22
     }
+
+    depends_on = [azurerm_network_interface.nic]
   }
 
   depends_on = [
@@ -128,6 +126,7 @@ resource "azurerm_virtual_machine" "vm" {
 output "public_ip_address" {
   value = azurerm_public_ip.public_ip.ip_address
 }
+
 
 
 
