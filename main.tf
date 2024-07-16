@@ -76,6 +76,21 @@ resource "azurerm_virtual_machine" "vm" {
     environment = "TerraformDemo"
   }
 
+  # Provisioner para transferir o arquivo docker-compose.yml
+  provisioner "file" {
+    source      = "docker-compose.yml"
+    destination = "/home/${var.admin_username}/docker-compose.yml"
+
+    connection {
+      type     = "ssh"
+      user     = var.admin_username
+      password = var.admin_password
+      host     = azurerm_public_ip.public_ip.ip_address
+      port     = 22
+    }
+  }
+
+  # Provisioner para executar comandos remotos
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
@@ -83,29 +98,19 @@ resource "azurerm_virtual_machine" "vm" {
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "sudo usermod -aG docker ${var.admin_username}",
-      "curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",
+      "sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",
       "sudo chmod +x /usr/local/bin/docker-compose",
-      "docker-compose -f /home/adminuser/docker-compose.yml up -d"
+      "docker-compose -f /home/${var.admin_username}/docker-compose.yml up -d"
     ]
 
     connection {
-      type     = "SSH"
+      type     = "ssh"
       user     = var.admin_username
       password = var.admin_password
       host     = azurerm_public_ip.public_ip.ip_address
-    }
-  }
-
-  provisioner "file" {
-    source      = "docker-compose.yml"
-    destination = "/home/adminuser/docker-compose.yml"
-
-    connection {
-      type     = "SSH"
-      user     = var.admin_username
-      password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address
+      port     = 22
     }
   }
 }
+
 
