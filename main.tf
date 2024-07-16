@@ -2,6 +2,22 @@ provider "azurerm" {
   features {}
 }
 
+variable "resource_group_name" {
+  default = "rg-terraform-wordpress"
+}
+
+variable "location" {
+  default = "eastus"
+}
+
+variable "admin_username" {
+  default = "adminuser"
+}
+
+variable "admin_password" {
+  default = "AdminPass1234!"
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
@@ -46,7 +62,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_DS1_v2"  # Novo tamanho da VM
+  vm_size               = "Standard_DS1_v2"
 
   storage_os_disk {
     name              = "osdisk"
@@ -112,5 +128,10 @@ resource "azurerm_virtual_machine" "vm" {
     }
   }
 }
+
+output "public_ip_address" {
+  value = azurerm_public_ip.public_ip.ip_address
+}
+
 
 
