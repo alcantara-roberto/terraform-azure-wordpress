@@ -46,7 +46,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s" # Altere o tamanho da VM conforme necessário
+  vm_size               = "Standard_B1s"
   availability_set_id   = azurerm_availability_set.availset.id
 
   storage_os_disk {
@@ -78,7 +78,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   provisioner "local-exec" {
-    command = "sleep 60"
+    command = "timeout /t 60"
   }
 
   provisioner "file" {
@@ -126,8 +126,8 @@ resource "azurerm_availability_set" "availset" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
-  managed           = true
-  platform_fault_domain_count = 2
+  managed                      = true
+  platform_fault_domain_count  = 2
   platform_update_domain_count = 5
 }
 
