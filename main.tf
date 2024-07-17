@@ -87,19 +87,6 @@ resource "null_resource" "wait_for_ip" {
     interpreter = ["PowerShell", "-Command"]
   }
 
-  provisioner "file" {
-    source      = "docker-compose.yml"
-    destination = "/home/${var.admin_username}/docker-compose.yml"
-
-    connection {
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address  # Use o IP público da VM aqui
-      port     = 22
-    }
-  }
-
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
@@ -116,7 +103,9 @@ resource "null_resource" "wait_for_ip" {
       type     = "ssh"
       user     = var.admin_username
       password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address
+      host     = azurerm_virtual_machine.vm.network_interface_ids[0].apply(lambda) {
+        azurerm_network_interface.nic.ip_configurations[0].public_ip_address_id
+      }
       port     = 22
     }
   }
