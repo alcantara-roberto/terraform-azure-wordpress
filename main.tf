@@ -83,26 +83,20 @@ resource "null_resource" "wait_for_ip" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      while (!(Test-NetConnection -ComputerName ${azurerm_public_ip.public_ip.ip_address} -Port 22 -InformationLevel Quiet)) {
-        Write-Host "Aguardando disponibilidade do IP público da VM..."
-        Start-Sleep -Seconds 10
-      }
+      Start-Sleep -Seconds 180  # Aumente para 180 segundos (3 minutos) ou mais, se necessário
     EOT
     interpreter = ["PowerShell", "-Command"]
   }
 
-  # Aguardar antes de aplicar o provisioner file
   provisioner "file" {
-    when = "create"
     source      = "docker-compose.yml"
     destination = "/home/${var.admin_username}/docker-compose.yml"
-
 
     connection {
       type     = "ssh"
       user     = var.admin_username
       password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address
+      host     = azurerm_public_ip.public_ip.ip_address  # Use o IP público da VM aqui
       port     = 22
     }
   }
