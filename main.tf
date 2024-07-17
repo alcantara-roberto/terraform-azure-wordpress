@@ -103,9 +103,7 @@ resource "null_resource" "wait_for_ip" {
       type     = "ssh"
       user     = var.admin_username
       password = var.admin_password
-      host     = azurerm_virtual_machine.vm.network_interface_ids[0].apply(lambda) {
-        azurerm_network_interface.nic.ip_configurations[0].public_ip_address_id
-      }
+      host     = azurerm_virtual_machine.vm.network_interface_ids[0].apply(lambda = azurerm_network_interface.nic.ip_configurations[0].public_ip_address
       port     = 22
     }
   }
