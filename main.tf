@@ -11,22 +11,6 @@ provider "azurerm" {
   features {}
 }
 
-variable "resource_group_name" {
-  default = "rg-terraform-wordpress"
-}
-
-variable "location" {
-  default = "eastus"
-}
-
-variable "admin_username" {
-  default = "adminuser"
-}
-
-variable "admin_password" {
-  default = "AdminPass1234!"
-}
-
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
