@@ -77,14 +77,13 @@ resource "azurerm_virtual_machine" "vm" {
   tags = {
     environment = "TerraformDemo"
   }
+}
 
 resource "null_resource" "wait_for_ip" {
   depends_on = [azurerm_virtual_machine.vm]
 
   provisioner "local-exec" {
-    command = <<-EOT
-      Start-Sleep -Seconds 180  # Aumente para 180 segundos (3 minutos) ou mais, se necessário
-    EOT
+    command     = "Start-Sleep -Seconds 180"  # Ajuste o tempo conforme necessário
     interpreter = ["PowerShell", "-Command"]
   }
 
@@ -121,11 +120,6 @@ resource "null_resource" "wait_for_ip" {
       port     = 22
     }
   }
-
-  depends_on = [
-    azurerm_public_ip.public_ip,
-    azurerm_network_interface.nic
-  ]
 }
 
 resource "azurerm_availability_set" "availset" {
