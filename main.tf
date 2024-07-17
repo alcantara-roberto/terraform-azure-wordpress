@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 3.0.0"
-    }
-  }
-}
-
 provider "azurerm" {
   features {}
 }
@@ -48,8 +39,6 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
-
-  depends_on = [azurerm_public_ip.public_ip]
 }
 
 resource "azurerm_virtual_machine" "vm" {
@@ -58,6 +47,7 @@ resource "azurerm_virtual_machine" "vm" {
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
   vm_size               = "Standard_B1s" # Altere o tamanho da VM conforme necessário
+  availability_set_id   = azurerm_availability_set.availset.id
 
   storage_os_disk {
     name              = "osdisk"
@@ -126,9 +116,19 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   depends_on = [
-    azurerm_network_interface.nic,
-    azurerm_virtual_network.vnet
+    azurerm_public_ip.public_ip,
+    azurerm_network_interface.nic
   ]
+}
+
+resource "azurerm_availability_set" "availset" {
+  name                = "my-availability-set"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  managed           = true
+  platform_fault_domain_count = 2
+  platform_update_domain_count = 5
 }
 
 output "public_ip_address" {
