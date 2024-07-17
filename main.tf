@@ -82,8 +82,17 @@ resource "azurerm_virtual_machine" "vm" {
 resource "null_resource" "wait_for_ip" {
   depends_on = [azurerm_virtual_machine.vm]
 
-  provisioner "local-exec" {
-    command = "sleep 180"  # Aumente para 180 segundos (3 minutos) ou mais, se necessário
+  provisioner "remote-exec" {
+    inline = ["sleep 180"]
+    connection {
+      type        = "ssh"
+      user        = var.admin_username
+      password    = var.admin_password
+      host        = azurerm_public_ip.public_ip.ip_address
+      timeout     = "5m"
+      bastion_host = null
+      bastion_port = null
+    }
   }
 }
 
