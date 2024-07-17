@@ -11,25 +11,6 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
-}
-
-resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-}
-
-resource "azurerm_subnet" "subnet" {
-  name                 = "subnet"
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
-}
-
 resource "azurerm_public_ip" "public_ip" {
   name                = "public_ip"
   location            = azurerm_resource_group.rg.location
@@ -57,7 +38,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s" # Altere o tamanho da VM conforme necessário
+  vm_size               = "Standard_B1s"
 
   storage_os_disk {
     name              = "osdisk"
@@ -126,8 +107,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   depends_on = [
-    azurerm_network_interface.nic,
-    azurerm_virtual_network.vnet
+    azurerm_network_interface.nic
   ]
 }
 
