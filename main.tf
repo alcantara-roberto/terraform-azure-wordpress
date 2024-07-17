@@ -48,6 +48,8 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
+
+  depends_on = [azurerm_public_ip.public_ip]
 }
 
 resource "azurerm_virtual_machine" "vm" {
@@ -55,7 +57,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = var.vm_size
+  vm_size               = "Standard_B1s" # Altere o tamanho da VM conforme necessário
 
   storage_os_disk {
     name              = "osdisk"
@@ -124,7 +126,6 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   depends_on = [
-    azurerm_public_ip.public_ip,
     azurerm_network_interface.nic,
     azurerm_virtual_network.vnet
   ]
