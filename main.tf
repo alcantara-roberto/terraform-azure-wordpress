@@ -78,7 +78,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   provisioner "local-exec" {
-    command = "timeout /t 60"
+    command = "sleep 60"
   }
 
   provisioner "file" {
