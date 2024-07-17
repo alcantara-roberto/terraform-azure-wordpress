@@ -14,5 +14,10 @@ variable "admin_password" {
   default = "AdminPass1234!"
 }
 
+variable "vm_size" {
+  default = "Standard_B2s" # Tamanho da VM ajustado para um SKU diferente
+}
+
+
 
 
