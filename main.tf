@@ -85,6 +85,10 @@ resource "null_resource" "wait_for_ip" {
   provisioner "local-exec" {
     command = "sleep 180"  # Aumente para 180 segundos (3 minutos) ou mais, se necessário
   }
+}
+
+resource "null_resource" "provision" {
+  depends_on = [null_resource.wait_for_ip]
 
   provisioner "file" {
     source      = "docker-compose.yml"
