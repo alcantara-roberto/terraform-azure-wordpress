@@ -79,7 +79,10 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   provisioner "local-exec" {
-    command = "sleep 60"
+    command = <<-EOT
+      Start-Sleep -Seconds 60
+    EOT
+    interpreter = ["PowerShell", "-Command"]
   }
 
   provisioner "file" {
