@@ -3,7 +3,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  default = "westus"
+  default = "eastus"
 }
 
 variable "admin_username" {
@@ -13,11 +13,3 @@ variable "admin_username" {
 variable "admin_password" {
   default = "AdminPass1234!"
 }
-
-variable "vm_size" {
-  default = "Standard_B2s" # Tamanho da VM ajustado para um SKU diferente
-}
-
-
-
-
