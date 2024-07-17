@@ -119,11 +119,6 @@ resource "null_resource" "wait_for_ip" {
       port     = 22
     }
   }
-
-  depends_on = [
-    azurerm_public_ip.public_ip,
-    azurerm_network_interface.nic
-  ]
 }
 
 resource "azurerm_availability_set" "availset" {
@@ -131,9 +126,9 @@ resource "azurerm_availability_set" "availset" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
-  managed           = true
-  platform_fault_domain_count = 2
-  platform_update_domain_count = 5
+  managed                       = true
+  platform_fault_domain_count   = 2
+  platform_update_domain_count  = 5
 }
 
 output "public_ip_address" {
