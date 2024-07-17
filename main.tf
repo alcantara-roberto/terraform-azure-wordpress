@@ -78,14 +78,22 @@ resource "azurerm_virtual_machine" "vm" {
     environment = "TerraformDemo"
   }
 
+resource "null_resource" "wait_for_ip" {
+  depends_on = [azurerm_virtual_machine.vm]
+
   provisioner "local-exec" {
     command = <<-EOT
-      Start-Sleep -Seconds 300
+      while (!(Test-NetConnection -ComputerName ${azurerm_public_ip.public_ip.ip_address} -Port 22 -InformationLevel Quiet)) {
+        Write-Host "Aguardando disponibilidade do IP público da VM..."
+        Start-Sleep -Seconds 10
+      }
     EOT
     interpreter = ["PowerShell", "-Command"]
   }
 
+  # Aguardar antes de aplicar o provisioner file
   provisioner "file" {
+    when = "create"
     source      = "docker-compose.yml"
     destination = "/home/${var.admin_username}/docker-compose.yml"
 
