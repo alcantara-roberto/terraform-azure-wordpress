@@ -89,8 +89,6 @@ resource "azurerm_virtual_machine" "vm" {
     source      = "docker-compose.yml"
     destination = "/home/${var.admin_username}/docker-compose.yml"
 
-    # Condição para garantir que o host seja definido apenas quando a VM estiver criada
-    when = after("azurerm_virtual_machine.vm")
 
     connection {
       type     = "ssh"
