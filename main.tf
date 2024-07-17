@@ -79,11 +79,11 @@ resource "azurerm_virtual_machine" "vm" {
   }
 }
 
-resource "null_resource" "provision" {
+resource "null_resource" "wait_for_ip" {
   depends_on = [azurerm_virtual_machine.vm]
 
   provisioner "local-exec" {
-    command = "sleep 180"
+    command = "sleep 180"  # Aumente para 180 segundos (3 minutos) ou mais, se necessário
   }
 
   provisioner "file" {
@@ -94,7 +94,7 @@ resource "null_resource" "provision" {
       type     = "ssh"
       user     = var.admin_username
       password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address
+      host     = azurerm_public_ip.public_ip.ip_address  # Use o IP público da VM aqui
       port     = 22
     }
   }
@@ -119,6 +119,11 @@ resource "null_resource" "provision" {
       port     = 22
     }
   }
+
+  depends_on = [
+    azurerm_public_ip.public_ip,
+    azurerm_network_interface.nic
+  ]
 }
 
 resource "azurerm_availability_set" "availset" {
