@@ -20,16 +20,6 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
-
-  # Apply the NSG to the subnet if needed
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
-
-resource "azurerm_public_ip" "public_ip" {
-  name                = "public_ip"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
 }
 
 resource "azurerm_network_security_group" "nsg" {
@@ -48,6 +38,18 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+}
+
+resource "azurerm_network_security_group_association" "nsg_association" {
+  network_security_group_id = azurerm_network_security_group.nsg.id
+  subnet_id                 = azurerm_subnet.subnet.id
+}
+
+resource "azurerm_public_ip" "public_ip" {
+  name                = "public_ip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
 }
 
 resource "azurerm_network_interface" "nic" {
