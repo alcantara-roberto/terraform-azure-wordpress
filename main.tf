@@ -47,8 +47,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s" # Altere o tamanho da VM conforme necessário
-  availability_set_id   = azurerm_availability_set.availset.id
+  vm_size               = "Standard_B1s"
 
   storage_os_disk {
     name              = "osdisk"
@@ -82,17 +81,8 @@ resource "azurerm_virtual_machine" "vm" {
 resource "null_resource" "wait_for_ip" {
   depends_on = [azurerm_virtual_machine.vm]
 
-  provisioner "remote-exec" {
-    inline = ["sleep 180"]
-    connection {
-      type        = "ssh"
-      user        = var.admin_username
-      password    = var.admin_password
-      host        = azurerm_public_ip.public_ip.ip_address
-      timeout     = "5m"
-      bastion_host = null
-      bastion_port = null
-    }
+  provisioner "local-exec" {
+    command = "sleep 180"
   }
 }
 
@@ -107,7 +97,7 @@ resource "null_resource" "provision" {
       type     = "ssh"
       user     = var.admin_username
       password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address  # Use o IP público da VM aqui
+      host     = azurerm_public_ip.public_ip.ip_address
       port     = 22
     }
   }
