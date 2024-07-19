@@ -38,6 +38,18 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  security_rule {
+    name                       = "allow_http"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "example" {
@@ -90,6 +102,7 @@ resource "azurerm_virtual_machine" "vm" {
     computer_name  = "hostname"
     admin_username = var.admin_username
     admin_password = var.admin_password
+    custom_data    = filebase64("cloud-init.sh")
   }
 
   os_profile_linux_config {
@@ -98,60 +111,6 @@ resource "azurerm_virtual_machine" "vm" {
 
   tags = {
     environment = "TerraformDemo"
-  }
-}
-
-resource "null_resource" "wait_for_ip" {
-  depends_on = [azurerm_virtual_machine.vm]
-
-  provisioner "local-exec" {
-    command = "sleep 180"
-  }
-}
-
-resource "null_resource" "get_ip" {
-  depends_on = [azurerm_virtual_machine.vm]
-
-  provisioner "local-exec" {
-    command = "echo ${azurerm_public_ip.public_ip.ip_address}"
-  }
-}
-
-resource "null_resource" "provision" {
-  depends_on = [null_resource.wait_for_ip, null_resource.get_ip]
-
-  provisioner "file" {
-    source      = "docker-compose.yml"
-    destination = "/home/${var.admin_username}/docker-compose.yml"
-
-    connection {
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address
-      port     = 22
-    }
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y docker.io",
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker",
-      "sudo usermod -aG docker ${var.admin_username}",
-      "sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",
-      "sudo chmod +x /usr/local/bin/docker-compose",
-      "docker-compose -f /home/${var.admin_username}/docker-compose.yml up -d"
-    ]
-
-    connection {
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-      host     = azurerm_public_ip.public_ip.ip_address
-      port     = 22
-    }
   }
 }
 

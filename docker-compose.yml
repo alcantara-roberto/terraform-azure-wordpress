@@ -1,31 +1,22 @@
 version: '3.1'
 
 services:
-  db:
-    image: mysql:5.7
-    container_name: wordpressdb
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: GAud4mZby8F3SD6P
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wpuser
-      MYSQL_PASSWORD: wppassword
-    volumes:
-      - db_data:/var/lib/mysql
-
   wordpress:
-    image: wordpress:latest
-    container_name: wordpress
+    image: wordpress
     restart: always
     ports:
-      - "80:80"
+      - 80:80
     environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wpuser
-      WORDPRESS_DB_PASSWORD: wppassword
-      WORDPRESS_DB_NAME: wordpress
-    depends_on:
-      - db
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: projetouser
+      WORDPRESS_DB_PASSWORD: projetopass
+      WORDPRESS_DB_NAME: projetodb
 
-volumes:
-  db_data:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: projetodb
+      MYSQL_USER: projetouser
+      MYSQL_PASSWORD: projetopass
+      MYSQL_ROOT_PASSWORD: GAud4mZby8F3SD6P
