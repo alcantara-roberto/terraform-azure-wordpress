@@ -109,8 +109,16 @@ resource "null_resource" "wait_for_ip" {
   }
 }
 
+resource "null_resource" "get_ip" {
+  depends_on = [azurerm_virtual_machine.vm]
+
+  provisioner "local-exec" {
+    command = "echo ${azurerm_public_ip.public_ip.ip_address}"
+  }
+}
+
 resource "null_resource" "provision" {
-  depends_on = [null_resource.wait_for_ip]
+  depends_on = [null_resource.wait_for_ip, null_resource.get_ip]
 
   provisioner "file" {
     source      = "docker-compose.yml"
