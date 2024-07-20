@@ -115,7 +115,10 @@ resource "azurerm_virtual_machine" "vm" {
     environment = "TerraformDemo"
   }
 
-  depends_on = [azurerm_network_interface.nic]
+  depends_on = [
+    azurerm_network_interface.nic,
+    azurerm_public_ip.public_ip
+  ]
 }
 
 output "public_ip_address" {
