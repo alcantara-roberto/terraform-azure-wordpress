@@ -1,28 +1,27 @@
 #!/bin/bash
 
 # Atualizar lista de pacotes no sistema
-apt-get update
+sudo apt-get update
 
 # Instalar o Docker
-apt-get install -y docker.io
+sudo apt-get install -y docker.io
 
 # Inicializar serviços Docker
-systemctl start docker
-systemctl enable docker
+sudo systemctl start docker
+sudo systemctl enable docker
 
 # Adicionar o usuário ao grupo Docker
-usermod -aG docker adminuser
+sudo usermod -aG docker ${var.admin_username}
 
 # Instalar Docker Compose
-curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
 # Criar o arquivo docker-compose.yml
-cat <<EOF > /home/adminuser/docker-compose.yml
+cat <<EOF > /home/${var.admin_username}/docker-compose.yml
 version: '3.1'
 
 services:
-
   wordpress:
     image: wordpress
     restart: always
@@ -43,5 +42,4 @@ services:
 EOF
 
 # Subir os containers
-sudo -H -u adminuser bash -c 'docker-compose -f /home/adminuser/docker-compose.yml up -d'
-
+sudo -H -u ${var.admin_username} bash -c 'docker-compose -f /home/${var.admin_username}/docker-compose.yml up -d'
