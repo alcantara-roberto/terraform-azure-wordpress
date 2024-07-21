@@ -2,12 +2,6 @@
 
 O projeto Desafio Extra - Devops utiliza Terraform para provisionar uma VM no Azure, instala Docker e configura containers para WordPress e MySQL usando Docker Compose.
 
-## Pré-requisitos para sua execução
-
-- Conta no Azure.
-- Azure CLI instalado e configurado.
-- Terraform instalado.
-
 ## Instruções para sua execução
 
 1. Inicie o processo de clone do repositório:
@@ -31,7 +25,12 @@ O projeto Desafio Extra - Devops utiliza Terraform para provisionar uma VM no Az
     terraform apply
     ```
 
-5. Após a execução, o IP público da VM será exibido. Acesse `http://<seu_ip_publico>` para ver o WordPress.
+5. Aplique novamente para obter o IP público:
+    ```bash
+    terraform apply
+    ```
+
+6. Após a execução, o IP público da VM será exibido. Acesse `http://<seu_ip_publico>` para ver o WordPress.
 
 ## Configuração
 
