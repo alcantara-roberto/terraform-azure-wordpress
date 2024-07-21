@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.85.0"
+      version = "=3.85.0"
     }
   }
 }
@@ -124,22 +124,6 @@ resource "azurerm_virtual_machine" "vm" {
   }
 }
 
-resource "null_resource" "wait_for_ip" {
-  provisioner "local-exec" {
-    command = "sleep 60"
-  }
-
-  depends_on = [azurerm_virtual_machine.vm]
-}
-
-output "public_ip_address" {
+output "public_ip" {
   value = azurerm_public_ip.public_ip.ip_address
-}
-
-resource "null_resource" "refresh_ip_output" {
-  provisioner "local-exec" {
-    command = "terraform apply -target=azurerm_public_ip.public_ip -auto-approve"
-  }
-
-  depends_on = [null_resource.wait_for_ip]
 }
