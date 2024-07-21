@@ -75,8 +75,6 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
-
-  depends_on = [azurerm_public_ip.public_ip]
 }
 
 resource "azurerm_virtual_machine" "vm" {
@@ -114,29 +112,8 @@ resource "azurerm_virtual_machine" "vm" {
   tags = {
     environment = "TerraformDemo"
   }
-
-  depends_on = [
-    azurerm_network_interface.nic,
-    azurerm_public_ip.public_ip
-  ]
-}
-
-resource "null_resource" "wait_for_ip" {
-  provisioner "local-exec" {
-    command = "sleep 60"
-  }
-
-  depends_on = [azurerm_virtual_machine.vm]
 }
 
 output "public_ip_address" {
   value = azurerm_public_ip.public_ip.ip_address
-}
-
-resource "null_resource" "refresh_ip_output" {
-  provisioner "local-exec" {
-    command = "terraform refresh -target=azurerm_public_ip.public_ip"
-  }
-
-  depends_on = [null_resource.wait_for_ip]
 }
