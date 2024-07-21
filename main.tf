@@ -122,4 +122,9 @@ resource "azurerm_virtual_machine" "vm" {
   tags = {
     environment = "TerraformDemo"
   }
+
+  depends_on = [
+    azurerm_network_interface.nic,
+    azurerm_public_ip.public_ip
+  ]
 }
