@@ -110,9 +110,9 @@ resource "azurerm_virtual_machine" "vm" {
 
   os_profile {
     computer_name  = "hostname"
-    admin_username = var.admin_username
-    admin_password = var.admin_password
-    custom_data    = filebase64("cloud-init.sh")
+    admin_username = "adminuser"
+    admin_password = "GAud4mZby8F3SD6P"
+    custom_data    = file("cloud-init.sh")
   }
 
   os_profile_linux_config {
