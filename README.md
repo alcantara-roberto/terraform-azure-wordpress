@@ -31,6 +31,7 @@ O projeto Desafio Extra - Devops utiliza Terraform para provisionar uma VM no Az
     ```
 
 6. Após a execução, o IP público da VM será exibido. Acesse `http://<seu_ip_publico>` para ver o WordPress.
+   (Caso a url esteja indisponível, é aconselhado uma espera de 3 a 5 minutos para que esteja tudo provisionado corretamente).
 
 ## Configuração
 
