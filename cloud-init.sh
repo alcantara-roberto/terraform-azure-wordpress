@@ -56,8 +56,9 @@ EOF
 # Mudar permissões do arquivo docker-compose.yml
 sudo chown ${var.admin_username}:${var.admin_username} /home/${var.admin_username}/docker-compose.yml
 
-# Subir os containers
+# Executar Docker Compose para subir os containers
 sudo -H -u ${var.admin_username} bash -c 'docker-compose -f /home/${var.admin_username}/docker-compose.yml up -d'
 
 # Reiniciar a máquina para garantir que as mudanças de grupo sejam aplicadas
 sudo reboot
+
